@@ -1,6 +1,6 @@
 // api/vote.js
 // Serverless function to cast a vote
-// Uses GitHub as storage backend
+// Uses GitHub as storage backend with retry logic for conflicts
 
 const { Octokit } = require('@octokit/rest');
 const crypto = require('crypto');
@@ -16,6 +16,7 @@ const VOTES_PATH = 'data/votes.json';
 // Rate limiting configuration
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
 const MAX_VOTES_PER_WINDOW = 10;
+const MAX_RETRIES = 3; // Retry on conflicts
 
 // In-memory rate limiting (resets on cold start)
 const rateLimitMap = new Map();
@@ -74,19 +75,120 @@ async function getGitHubFile(octokit, path) {
   }
 }
 
-// Helper: Update file on GitHub
-async function updateGitHubFile(octokit, path, content, sha, message) {
+// Helper: Update file on GitHub with retry logic
+async function updateGitHubFile(octokit, path, content, sha, message, retryCount = 0) {
   const contentEncoded = Buffer.from(JSON.stringify(content, null, 2)).toString('base64');
   
-  await octokit.repos.createOrUpdateFileContents({
-    owner: GITHUB_OWNER,
-    repo: GITHUB_REPO,
-    path: path,
-    message: message,
-    content: contentEncoded,
-    sha: sha,
-    branch: GITHUB_BRANCH
-  });
+  try {
+    await octokit.repos.createOrUpdateFileContents({
+      owner: GITHUB_OWNER,
+      repo: GITHUB_REPO,
+      path: path,
+      message: message,
+      content: contentEncoded,
+      sha: sha,
+      branch: GITHUB_BRANCH
+    });
+  } catch (err) {
+    // If conflict (409) and we have retries left, fetch fresh SHA and retry
+    if (err.status === 409 && retryCount < MAX_RETRIES) {
+      console.log(`Conflict detected, retrying (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+      await new Promise(resolve => setTimeout(resolve, 500)); // Brief delay
+      
+      // Get fresh file with updated SHA
+      const freshFile = await getGitHubFile(octokit, path);
+      
+      // Retry with fresh SHA
+      await updateGitHubFile(octokit, path, content, freshFile.sha, message, retryCount + 1);
+    } else {
+      throw err;
+    }
+  }
+}
+
+// Main vote processing function with transaction-like behavior
+async function processVote(octokit, blogId, ipHash) {
+  let attempt = 0;
+  
+  while (attempt < MAX_RETRIES) {
+    try {
+      // Get fresh data on each attempt
+      const [dataFile, votesFile] = await Promise.all([
+        getGitHubFile(octokit, DATA_PATH),
+        getGitHubFile(octokit, VOTES_PATH)
+      ]);
+      
+      if (!dataFile.content) {
+        throw new Error('Data file not found');
+      }
+      
+      // Initialize votes structure if needed
+      const votesData = votesFile.content || { votes: {} };
+      const blogData = dataFile.content;
+      
+      // Find blog entry
+      const blogEntry = blogData.entries.find(e => e.id === blogId);
+      if (!blogEntry) {
+        throw new Error('Blog not found');
+      }
+      
+      // Check if user already voted
+      if (!votesData.votes[blogId]) {
+        votesData.votes[blogId] = {};
+      }
+      
+      if (votesData.votes[blogId][ipHash]) {
+        return { 
+          error: 'You have already voted for this blog',
+          alreadyVoted: true,
+          status: 400
+        };
+      }
+      
+      // Record vote
+      votesData.votes[blogId][ipHash] = Date.now();
+      blogEntry.votes = (blogEntry.votes || 0) + 1;
+      
+      // Try to update both files
+      await updateGitHubFile(
+        octokit, 
+        VOTES_PATH, 
+        votesData, 
+        votesFile.sha, 
+        `Vote recorded for ${blogId}`
+      );
+      
+      await updateGitHubFile(
+        octokit, 
+        DATA_PATH, 
+        blogData, 
+        dataFile.sha, 
+        `Update vote count for ${blogId}`
+      );
+      
+      // Success!
+      return {
+        success: true,
+        newVoteCount: blogEntry.votes,
+        message: 'Vote recorded successfully'
+      };
+      
+    } catch (err) {
+      attempt++;
+      
+      if (err.status === 409 && attempt < MAX_RETRIES) {
+        // Conflict - wait briefly and retry
+        console.log(`Vote conflict, retrying attempt ${attempt}/${MAX_RETRIES}`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+        continue;
+      }
+      
+      // Non-conflict error or out of retries
+      throw err;
+    }
+  }
+  
+  throw new Error('Failed to process vote after multiple retries');
 }
 
 module.exports = async (req, res) => {
@@ -124,65 +226,14 @@ module.exports = async (req, res) => {
     // Initialize GitHub API
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
     
-    // Get current data
-    const [dataFile, votesFile] = await Promise.all([
-      getGitHubFile(octokit, DATA_PATH),
-      getGitHubFile(octokit, VOTES_PATH)
-    ]);
+    // Process vote with retry logic
+    const result = await processVote(octokit, blogId, ipHash);
     
-    if (!dataFile.content) {
-      return res.status(500).json({ error: 'Data file not found' });
+    if (result.error) {
+      return res.status(result.status || 400).json(result);
     }
     
-    // Initialize votes structure if needed
-    const votesData = votesFile.content || { votes: {} };
-    const blogData = dataFile.content;
-    
-    // Find blog entry
-    const blogEntry = blogData.entries.find(e => e.id === blogId);
-    if (!blogEntry) {
-      return res.status(404).json({ error: 'Blog not found' });
-    }
-    
-    // Check if user already voted
-    if (!votesData.votes[blogId]) {
-      votesData.votes[blogId] = {};
-    }
-    
-    if (votesData.votes[blogId][ipHash]) {
-      return res.status(400).json({ 
-        error: 'You have already voted for this blog',
-        alreadyVoted: true 
-      });
-    }
-    
-    // Record vote
-    votesData.votes[blogId][ipHash] = Date.now();
-    blogEntry.votes = (blogEntry.votes || 0) + 1;
-    
-    // Update both files on GitHub
-    await Promise.all([
-      updateGitHubFile(
-        octokit, 
-        VOTES_PATH, 
-        votesData, 
-        votesFile.sha, 
-        `Vote recorded for ${blogId}`
-      ),
-      updateGitHubFile(
-        octokit, 
-        DATA_PATH, 
-        blogData, 
-        dataFile.sha, 
-        `Update vote count for ${blogId}`
-      )
-    ]);
-    
-    res.json({ 
-      success: true, 
-      newVoteCount: blogEntry.votes,
-      message: 'Vote recorded successfully'
-    });
+    res.json(result);
     
   } catch (err) {
     console.error('Error processing vote:', err);
