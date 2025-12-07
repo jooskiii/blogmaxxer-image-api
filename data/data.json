@@ -87,6 +87,22 @@
       "img": "",
       "syn": "a site to explore the wired",
       "votes": 44
+    },
+    {
+      "id": "lacanian ink",
+      "title": "lacanian ink",
+      "url": "https://www.lacan.com/sitemap.htm",
+      "img": "",
+      "syn": "psychoanalysis journal. found accidentally reading some zizek. it's cool",
+      "votes": 23
+    },
+    {
+      "id": "the oil drum",
+      "title": "the oil drum",
+      "url": "http://theoildrum.com/special/archives",
+      "img": "",
+      "syn": "old archive of an oil market blog. niche topic, strange histories",
+      "votes": 26
     }
   ]
 }
