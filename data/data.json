@@ -135,6 +135,14 @@
       "img": "",
       "syn": "independent music blog w/ wide range of interviews, mixes, etc",
       "votes": 21
-    }
+    },
+    {
+      "id": "piclog",
+      "title": "passion weiss",
+      "url": "https://piclog.blue/index.php",
+      "img": "",
+      "syn": "simple site on which you can post a photo and write words; blurry cute",
+      "votes": 19
+    },
   ]
 }
