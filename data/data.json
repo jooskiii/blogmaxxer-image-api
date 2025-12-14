@@ -119,6 +119,22 @@
       "img": "",
       "syn": "schopenhauer's must-read treatise on how to avoid writing like an idiot",
       "votes": 48
+    },
+    {
+      "id": "melville's marginalia",
+      "title": "melville's marginalia",
+      "url": "https://melvillesmarginalia.org/",
+      "img": "",
+      "syn": "a library of annotations and notes in books owned by herman melville",
+      "votes": 32
+    },
+    {
+      "id": "passion weiss",
+      "title": "passion weiss",
+      "url": "https://www.passionweiss.com/category/interviews/",
+      "img": "",
+      "syn": "independent music blog w/ wide range of interviews, mixes, etc",
+      "votes": 21
     }
   ]
 }
