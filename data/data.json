@@ -143,6 +143,38 @@
       "img": "piclog.jpg",
       "syn": "simple site on which you can post a photo and write words; blurry cute",
       "votes": 19
+    },
+    {
+      "id": "open culture",
+      "title": "open culture",
+      "url": "https://www.openculture.com/",
+      "img": "",
+      "syn": ""the best free and cultural education on the web"",
+      "votes": 26
+    },
+    {
+      "id": "ribo zone",
+      "title": "ribo zone",
+      "url": "https://ribo.zone/",
+      "img": "",
+      "syn": "funky scientist's superbly designed personal site",
+      "votes": 25
+    },
+    {
+      "id": "old maps online",
+      "title": "old maps online",
+      "url": "https://www.oldmapsonline.org/",
+      "img": "",
+      "syn": "explore old maps and find random kings of longfallen dynasties. fun",
+      "votes": 15
+    },
+    {
+      "id": "h net",
+      "title": "h net",
+      "url": "https://www.h-net.org/reviews/review_browse.php?browse=revdate&type=Any&list_id=0&revdate=0&page=1",
+      "img": "",
+      "syn": "academic book review site for the humanities and social sciences",
+      "votes": 31
     }
   ]
 }
