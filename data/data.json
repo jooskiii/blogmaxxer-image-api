@@ -175,6 +175,30 @@
       "img": "",
       "syn": "academic book review site for the humanities and social sciences",
       "votes": 31
+    },
+    {
+      "id": "cinni.net",
+      "title": "cinni.net",
+      "url": "https://cinni.net/",
+      "img": "",
+      "syn": "cinni's personal corner of the web. flowery, distinct, a model personal site",
+      "votes": 24
+    },
+    {
+      "id": "dispatch",
+      "title": "dispatch",
+      "url": "https://dispatch-media.com/",
+      "img": "",
+      "syn": "modern magazine fuelled by frontier spirit - open pitches for aspiring journos",
+      "votes": 27
+    },
+    {
+      "id": "knoxstation",
+      "title": "knoxstation",
+      "url": "https://knoxstation.neocities.org/",
+      "img": "",
+      "syn": "most y2k maxxed site i ever done seen ever in my life",
+      "votes": 25
     }
   ]
 }
