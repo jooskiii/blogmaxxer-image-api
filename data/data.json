@@ -207,6 +207,166 @@
       "img": "",
       "syn": "random quirked up philosophy site hosted by Kevin  R. D. Shepherd",
       "votes": 25
+    },
+    {
+      "id": "wittgenfine library",
+      "title": "wittgenfine library",
+      "url": "https://wittgenfine.github.io/Pages/library.html",
+      "img": "",
+      "syn": "how about a page of things to read featured within a page of things to read",
+      "votes": 12
+    },
+    {
+      "id": "cpp documents",
+      "title": "cpp documents",
+      "url": "https://michaelharrison.org.uk/2020/12/documents-of-the-communist-party-of-peru/",
+      "img": "",
+      "syn": "shoutout the now near-irrelevant communist party of peru. thousand plus pages of their writing for the nosy (me)",
+      "votes": 23
+    },
+    {
+      "id": "great writers project",
+      "title": "great writers project",
+      "url": "https://readingproject.au/SpecialReadingProjects/GreatWriters/GreatWritersProject",
+      "img": "",
+      "syn": "very fun attempt at creating dialogue with great, but unfortunately deceased, writers",
+      "votes": 43
+    },
+    {
+      "id": "neurotic gradient descent",
+      "title": "neurotic gradient descent",
+      "url": "https://neuroticgradientdescent.blogspot.com/?m=0",
+      "img": "",
+      "syn": "become meditation master. one post was quite a useful account of buddhist meditation theory",
+      "votes": 34
+    },
+    {
+      "id": "matt lakeman",
+      "title": "matt lakeman",
+      "url": "https://mattlakeman.org/",
+      "img": "",
+      "syn": "guy travels a lot and takes notes",
+      "votes": 19
+    },
+    {
+      "id": "the last psychiatrist",
+      "title": "the last psychiatrist",
+      "url": "https://thelastpsychiatrist.com/",
+      "img": "",
+      "syn": "imagine if you viewed EVERYTHING as libidinal. tlp will unpack the freudian implications of you doing so",
+      "votes": 58
+    },
+    {
+      "id": "slate star codex",
+      "title": "slate star codex",
+      "url": "https://slatestarcodex.com/",
+      "img": "",
+      "syn": "scott alexander old blog. if you know who that is. rationalist sf nerds love him",
+      "votes": 13
+    },
+    {
+      "id": "incessant pain",
+      "title": "incessant pain",
+      "url": "https://incessantpain.neocities.org/",
+      "img": "",
+      "syn": "wacked out personal site but i am a fan",
+      "votes": 33
+    },
+    {
+      "id": "oyaswmi",
+      "title": "oyaswmi",
+      "url": "https://oyaswmi.net/",
+      "img": "",
+      "syn": "wondrously designed lain-inspired UI. worth a peek",
+      "votes": 39
+    },
+    {
+      "id": "frutiger aero archive",
+      "title": "frutiger aero archive",
+      "url": "https://frutigeraeroarchive.org/",
+      "img": "",
+      "syn": "does what it says on the tin. good explore for my image makers out there",
+      "votes": 24
+    },
+    {
+      "id": "brooklynights",
+      "title": "brooklynights",
+      "url": "https://brooklynights.nekoweb.org/",
+      "img": "",
+      "syn": "i think some russian guy is behind this site and he's awesome. totally unique swag",
+      "votes": 45
+    },
+    {
+      "id": "nekoweb",
+      "title": "nekoweb",
+      "url": "https://nekoweb.org/",
+      "img": "",
+      "syn": "neocities alternative; host your site and explore other personal sites which are often quite cool",
+      "votes": 23
+    },
+    {
+      "id": "outerweb",
+      "title": "outerweb",
+      "url": "https://outerweb.org/about",
+      "img": "",
+      "syn": "basically blogmaxxer but make it a search function. an improvement on this rather contrived randomizer",
+      "votes": 54
+    },
+    {
+      "id": "hacker news",
+      "title": "hacker news",
+      "url": "https://news.ycombinator.com/news",
+      "img": "",
+      "syn": "news for nerds who like code and pc shit. an og classic though",
+      "votes": 42
+    },
+    {
+      "id": "kagi small web",
+      "title": "kagi small web",
+      "url": "https://blog.kagi.com/small-web",
+      "img": "",
+      "syn": "alternative independently-owned search engine. some interesting blogging on google's monopoly included",
+      "votes": 32
+    },
+    {
+      "id": "indieweb",
+      "title": "indieweb",
+      "url": "https://indieweb.org/Getting_Started",
+      "img": "",
+      "syn": "a nice initiative; useful info on how to build your own site and participate in the 'indie web' ",
+      "votes": 36
+    },
+    {
+      "id": "pc98 club",
+      "title": "pc98 club",
+      "url": "fun random weebmaxxed personal site that i added because of 'literature' section",
+      "img": "",
+      "syn": "[ADD DESCRIPTION]",
+      "votes": 31
+    },
+    {
+      "id": "byfat",
+      "title": "byfat",
+      "url": "http://byfat.xxx/",
+      "img": "",
+      "syn": "guy who codes writes some things; he used to work for twitter",
+      "votes": 8
+    },
+    {
+      "id": "motorcycle paradise",
+      "title": "motorcycle paradise",
+      "url": "https://motorcycleparadise.net/",
+      "img": "",
+      "syn": "guy travels the world riding around on... you guessed it. awesome map feature that also serves as a contents page",
+      "votes": 28
+    },
+    {
+      "id": "longreads",
+      "title": "longreads",
+      "url": "https://longreads.com/about/",
+      "img": "",
+      "syn": "curated long form journalism. interesting quirk of listing each piece's word count",
+      "votes": 23
     }
   ]
 }
