@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing or invalid ?url=' });
   }
 
-  const screenshot = `https://image.thum.io/get/width/600/noanimate/${pageUrl}`;
+  const screenshot = `https://image.thum.io/get/width/600/wait/2/noanimate/${pageUrl}`;
 
   try {
     const controller = new AbortController();
