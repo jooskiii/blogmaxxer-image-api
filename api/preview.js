@@ -1,60 +1,56 @@
-// /api/preview.js — best-effort preview image: OG/Twitter -> apple-touch-icon -> favicon
+// /api/preview.js — OG image or thum.io screenshot fallback
 export default async function handler(req, res) {
+  const pageUrl = (req.query.url || '').trim();
+  
+  if (!/^https?:\/\//i.test(pageUrl)) {
+    return res.status(400).json({ error: 'Missing or invalid ?url=' });
+  }
+
+  const screenshot = `https://image.thum.io/get/width/600/noanimate/${pageUrl}`;
+
   try {
-    const pageUrl = (req.query.url || '').trim();
-    if (!/^https?:\/\//i.test(pageUrl)) {
-      return res.status(400).json({ error: 'Missing or invalid ?url=' });
-    }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
     const r = await fetch(pageUrl, {
       headers: { 'user-agent': 'jooski.fun-preview/1.0 (+https://jooski.fun)' },
-      redirect: 'follow'
+      redirect: 'follow',
+      signal: controller.signal
     });
+    clearTimeout(timeout);
 
     const html = await r.text();
 
-    // helpers
     const first = (re) => { const m = html.match(re); return m ? m[1] : ''; };
-    const resolve = (u) => new URL(u, pageUrl).toString();
+    const resolve = (u) => {
+      try { return new URL(u, pageUrl).toString(); }
+      catch { return ''; }
+    };
 
-    // 1) OG/Twitter images
-    const ogOrTw = [
+    const ogPatterns = [
       /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
       /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
       /<meta[^>]+property=["']og:image:url["'][^>]+content=["']([^"']+)["']/i,
-      /<meta[^>]+name=["']twitter:image(?::src)?["'][^>]+content=["']([^"']+)["']/i
+      /<meta[^>]+name=["']twitter:image(?::src)?["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i,
+      /<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i,
+      /<meta[^>]+itemprop=["']image["'][^>]+content=["']([^"']+)["']/i,
     ];
-    for (const re of ogOrTw) {
+
+    for (const re of ogPatterns) {
       const m = first(re);
-      if (m) return redirect(resolve(m), res);
+      if (m && m.length > 5) return redirect(resolve(m), res);
     }
 
-    // 2) Largest apple-touch-icon
-    const appleIcons = [...html.matchAll(
-      /<link[^>]+rel=["'][^"']*apple-touch-icon[^"']*["'][^>]*>/gi
-    )].map(tag => {
-      const href = (tag[0].match(/href=["']([^"']+)["']/i) || [,''])[1];
-      const sizes = (tag[0].match(/sizes=["'](\d+)x(\d+)["']/i) || [,'0','0']).slice(1).map(Number);
-      const area = sizes[0]*sizes[1];
-      return { href, area };
-    }).filter(x => x.href);
-    if (appleIcons.length) {
-      appleIcons.sort((a,b)=> b.area - a.area);
-      return redirect(resolve(appleIcons[0].href), res);
-    }
-
-    // 3) Favicon (rel=icon / shortcut icon), fallback to /favicon.ico
-    const iconHref =
-      first(/<link[^>]+rel=["'][^"']*icon[^"']*["'][^>]+href=["']([^"']+)["']/i) ||
-      '/favicon.ico';
-    return redirect(resolve(iconHref), res);
+    return redirect(screenshot, res);
 
   } catch (e) {
-    return res.status(500).json({ error: 'preview failed', detail: String(e) });
+    // Timeout, network error, whatever — just use thum.io
+    return redirect(screenshot, res);
   }
 }
 
 function redirect(url, res) {
-  res.setHeader('Cache-Control', 'public, s-maxage=259200, stale-while-revalidate=86400'); // 3 days at the edge
+  res.setHeader('Cache-Control', 'public, s-maxage=604800, stale-while-revalidate=86400');
   res.status(302).setHeader('Location', url).end();
 }
